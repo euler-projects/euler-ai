@@ -149,19 +149,21 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap;
   gap: 0.5rem;
 }
 
 .post-card-meta time {
   font-size: 0.8rem;
   color: var(--color-text-light);
+  flex-shrink: 0;
 }
 
 .post-card-tags {
   display: flex;
   gap: 0.375rem;
-  flex-wrap: wrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .tag-small {

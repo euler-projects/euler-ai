@@ -1,0 +1,11 @@
+# Bundler dependencies
+vendor/
+.bundle/
+
+# Jekyll build output
+_site/
+.jekyll-cache/
+.jekyll-metadata
+
+# macOS
+.DS_Store

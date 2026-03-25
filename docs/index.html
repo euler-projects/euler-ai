@@ -1,0 +1,39 @@
+---
+layout: default
+title: Home
+---
+<section class="posts-section">
+  <h2 class="section-title">Latest Posts</h2>
+  <div class="posts-grid">
+    {% for post in site.posts %}
+    <article class="post-card">
+      <a href="{{ post.url | relative_url }}" class="post-card-link">
+        <div class="post-card-content">
+          <h3 class="post-card-title">{{ post.title }}</h3>
+          <p class="post-card-excerpt">
+            {{ post.excerpt | strip_html | truncate: 120 }}
+          </p>
+          <div class="post-card-meta">
+            <time datetime="{{ post.date | date_to_xmlschema }}">
+              {{ post.date | date: "%Y-%m-%d" }}
+            </time>
+            {% if post.tags.size > 0 %}
+            <div class="post-card-tags">
+              {% for tag in post.tags limit:3 %}
+              <span class="tag-small">{{ tag }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </a>
+    </article>
+    {% endfor %}
+  </div>
+  
+  {% if site.posts.size == 0 %}
+  <div class="empty-state">
+    <p>No posts yet. Stay tuned...</p>
+  </div>
+  {% endif %}
+</section>

@@ -1,0 +1,24 @@
+# Site settings
+title: Euler AI Blog
+description: Development progress and updates for Euler AI
+author: Euler Team
+url: ""
+baseurl: ""
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Permalink
+permalink: /posts/:year/:month/:day/:title/
+
+# Collections
+collections:
+  posts:
+    output: true
+
+# Exclude from build
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock

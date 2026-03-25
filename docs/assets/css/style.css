@@ -150,12 +150,14 @@ a:hover {
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
+  flex-wrap: nowrap;
 }
 
 .post-card-meta time {
   font-size: 0.8rem;
   color: var(--color-text-light);
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .post-card-tags {
@@ -164,6 +166,7 @@ a:hover {
   flex-shrink: 1;
   min-width: 0;
   overflow: hidden;
+  flex-wrap: nowrap;
 }
 
 .tag-small {
@@ -172,6 +175,8 @@ a:hover {
   background-color: var(--color-tag-bg);
   color: var(--color-tag-text);
   border-radius: var(--radius-small);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 /* ===== Empty State ===== */

@@ -61,6 +61,7 @@ a:hover {
 }
 
 .header-container {
+  position: relative;
   max-width: var(--max-width);
   margin: 0 auto;
   display: flex;
@@ -172,12 +173,13 @@ a:hover {
 }
 
 .search-container {
-  position: relative;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  flex: 1;
+  width: 100%;
   max-width: 400px;
-  margin: 0 2rem;
 }
 
 .search-input-wrapper {
@@ -592,6 +594,16 @@ a:hover {
 }
 
 /* ===== Responsive ===== */
+@media (max-width: 1024px) and (min-width: 641px) {
+  .search-container {
+    max-width: 240px;
+  }
+
+  .github-link span {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .site-header {
     padding: 0.75rem 1rem;
@@ -625,13 +637,14 @@ a:hover {
   .search-container {
     display: none;
     position: fixed;
-    top: 0;
     left: 0;
     right: 0;
+    top: 0;
+    transform: none;
     padding: 0.75rem 1rem;
     padding-top: calc(0.75rem + env(safe-area-inset-top));
     max-width: none;
-    margin: 0;
+    width: auto;
     align-items: center;
     background-color: var(--color-surface);
     border-bottom: 1px solid var(--color-border);

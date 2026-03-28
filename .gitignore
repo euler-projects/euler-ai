@@ -32,19 +32,19 @@ build/
 ### VS Code ###
 .vscode/
 
-# Bundler dependencies
+### Bundler dependencies ### 
 vendor/
 .bundle/
 
-# Jekyll build output
+### Jekyll build output ### 
 _site/
 .jekyll-cache/
 .jekyll-metadata
 
-# MacOS
+### MacOS ### 
 .DS_Store
 
-# Python
+### Python ### 
 .env
 __pycache__/
 .venv/

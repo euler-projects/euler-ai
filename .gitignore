@@ -43,3 +43,8 @@ _site/
 
 # MacOS
 .DS_Store
+
+# Python
+.env
+__pycache__/
+.venv/

@@ -1,24 +1,20 @@
 FROM python:3.11-slim
 
-# Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
+ENV PYTHONUNBUFFERED=1
+ENV EULER_DEBUG=false
 
 WORKDIR /app
 
-# Copy dependency files first (for Docker cache)
 COPY pyproject.toml uv.lock ./
 
-# Install dependencies (without the project itself)
 RUN uv sync --no-dev --no-install-project
 
-# Copy source code
 COPY src/ ./src/
 
-# Install the project
-RUN uv sync --no-dev
+RUN uv sync --no-dev && rm -rf ~/.cache/uv
 
-# Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["python", "src/chat/main.py"]
+CMD ["uv", "run", "gunicorn", "chat.main:app", "-c", "src/chat/gunicorn.conf.py"]

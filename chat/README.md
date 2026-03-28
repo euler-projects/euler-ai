@@ -13,6 +13,7 @@ A streaming chat API built with LangChain + FastAPI + Uvicorn.
    ```bash
    cp .env.example .env
    ```
+   Set `EULER_DEBUG=true` in `.env` to enable hot reload during development.
 
 2. Install dependencies:
    ```bash
@@ -21,17 +22,8 @@ A streaming chat API built with LangChain + FastAPI + Uvicorn.
 
 3. Run the server:
    ```bash
-   # CLI mode
    uv run chat
-
-   # Or with uvicorn (hot reload)
-   uvicorn chat.main:app --reload
-
-   # Or run directly
-   python src/chat/main.py
    ```
-
-4. Open API docs: http://localhost:8000/docs
 
 ## Configuration
 

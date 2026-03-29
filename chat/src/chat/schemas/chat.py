@@ -14,6 +14,7 @@ class ChatRequest(BaseModel):
     temperature: float | None = Field(0.7, ge=0, le=2, description="Sampling temperature")
     max_tokens: int | None = Field(None, description="Maximum tokens to generate")
     stream: bool = Field(False, description="Whether to stream the response")
+    extra_body: dict | None = Field(None, description="Extra body parameters for API request")
 
 
 class ChatResponse(BaseModel):

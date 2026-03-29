@@ -35,6 +35,7 @@ class OpenAIService:
             temperature=request.temperature or self.default_temperature,
             max_tokens=request.max_tokens,
             stream=request.stream,
+            extra_body=request.extra_body,
         )
         
         if not request.stream:

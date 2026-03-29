@@ -42,6 +42,7 @@ class ChatService:
         llm = self.llm.bind(
             model=request.model or self.default_model,
             temperature=request.temperature or self.default_temperature,
+            extra_body=request.extra_body,
         )
         messages = self._convert_messages(request.messages)
         

@@ -123,6 +123,7 @@ uv run mypy src/
 | `temperature` | float | No | Sampling temperature (0-2). Defaults to env `EULER_OPENAI__TEMPERATURE` |
 | `max_tokens` | int | No | Maximum tokens to generate. Uses model default if not specified |
 | `stream` | bool | No | Enable streaming response (SSE). Defaults to `false` |
+| `extra_body` | object | No | Extra body parameters for API request, e.g. `{"enable_thinking": false}` |
 
 #### Non-streaming Chat
 

@@ -41,12 +41,13 @@ Configuration is loaded from the current working directory (CWD).
 All environment variables use the `EULER_` prefix. Nested settings use `__` as delimiter.
 
 | Variable | Description | Default |
-|----------|-------------|---------|
+|----------|-------------|--------|
 | `EULER_DEBUG` | Enable debug mode | `false` |
 | `EULER_APP_NAME` | Application name | `Chat API` |
 | `EULER_OPENAI__API_KEY` | OpenAI API key | `` |
 | `EULER_OPENAI__API_BASE` | OpenAI API base URL | `https://api.openai.com/v1` |
 | `EULER_OPENAI__MODEL` | Model name | `gpt-4o-mini` |
+| `EULER_OPENAI__TEMPERATURE` | Sampling temperature | `0.7` |
 | `EULER_SERVER__HOST` | Server host | `0.0.0.0` |
 | `EULER_SERVER__PORT` | Server port | `8000` |
 
@@ -106,13 +107,22 @@ uv run mypy src/
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/v1/chat/completions` | POST | Non-streaming chat |
-| `/api/v1/chat/completions/stream` | POST | Streaming chat (SSE) |
+| `/api/v1/chat/completions` | POST | Chat completion |
 | `/health` | GET | Health check |
 | `/docs` | GET | Swagger UI |
 | `/redoc` | GET | ReDoc |
 
 ### Usage Examples
+
+#### Request Parameters
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `messages` | array | **Yes** | List of chat messages, each with `role` and `content` |
+| `model` | string | No | Model to use. Defaults to env `EULER_OPENAI__MODEL` |
+| `temperature` | float | No | Sampling temperature (0-2). Defaults to env `EULER_OPENAI__TEMPERATURE` |
+| `max_tokens` | int | No | Maximum tokens to generate. Uses model default if not specified |
+| `stream` | bool | No | Enable streaming response (SSE). Defaults to `false` |
 
 #### Non-streaming Chat
 
@@ -120,6 +130,7 @@ uv run mypy src/
 curl -X POST http://localhost:8000/api/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
+    "model": "gpt-4o-mini",
     "messages": [
       {"role": "system", "content": "You are a helpful assistant."},
       {"role": "user", "content": "Hello!"}
@@ -131,31 +142,38 @@ curl -X POST http://localhost:8000/api/v1/chat/completions \
 Response:
 ```json
 {
-  "content": "Hello! How can I assist you today?",
-  "model": "gpt-4o-mini"
+  "id": "chatcmpl-xxx",
+  "object": "chat.completion",
+  "model": "gpt-4o-mini",
+  "choices": [{
+    "index": 0,
+    "message": {"role": "assistant", "content": "Hello! How can I assist you today?"},
+    "finish_reason": "stop"
+  }],
+  "usage": {"prompt_tokens": 10, "completion_tokens": 9, "total_tokens": 19}
 }
 ```
 
 #### Streaming Chat (SSE)
 
 ```bash
-curl -X POST http://localhost:8000/api/v1/chat/completions/stream \
+curl -X POST http://localhost:8000/api/v1/chat/completions \
   -H "Content-Type: application/json" \
   -H "Accept: text/event-stream" \
   -d '{
+    "model": "gpt-4o-mini",
     "messages": [
       {"role": "user", "content": "Tell me a joke."}
-    ]
+    ],
+    "stream": true
   }'
 ```
 
 Response (Server-Sent Events):
 ```
-data: {"content": "Why"}
+data: {"id":"chatcmpl-xxx","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Why"},"finish_reason":null}]}
 
-data: {"content": " don't"}
-
-data: {"content": " scientists"}
+data: {"id":"chatcmpl-xxx","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":" don't"},"finish_reason":null}]}
 
 ...
 

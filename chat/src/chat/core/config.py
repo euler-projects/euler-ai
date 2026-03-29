@@ -12,6 +12,7 @@ class OpenAISettings(BaseModel):
     api_key: str = Field(default="", description="OpenAI API key")
     api_base: str = Field(default="https://api.openai.com/v1", description="OpenAI API base URL")
     model: str = Field(default="gpt-4o-mini", description="OpenAI model name")
+    temperature: float = Field(default=0.7, description="Sampling temperature")
 
 
 class ServerSettings(BaseModel):

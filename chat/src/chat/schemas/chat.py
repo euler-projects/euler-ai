@@ -13,6 +13,7 @@ class ChatRequest(BaseModel):
     model: str | None = Field(None, description="Model to use for completion")
     temperature: float | None = Field(0.7, ge=0, le=2, description="Sampling temperature")
     max_tokens: int | None = Field(None, description="Maximum tokens to generate")
+    stream: bool = Field(False, description="Whether to stream the response")
 
 
 class ChatResponse(BaseModel):

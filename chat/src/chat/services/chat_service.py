@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator
 from functools import lru_cache
 
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage
+from langchain_core.messages import HumanMessage, AIMessage, SystemMessage, BaseMessage, AIMessageChunk
 
 from chat.core.config import get_settings
 from chat.schemas.chat import ChatRequest, Message
@@ -14,22 +14,10 @@ class ChatService:
     def __init__(self) -> None:
         settings = get_settings()
         self.default_model = settings.openai.model
-        self.api_key = settings.openai.api_key
-        self.api_base = settings.openai.api_base
-    
-    def _get_llm(
-        self,
-        model: str | None = None,
-        temperature: float = 0.7,
-        streaming: bool = False,
-    ) -> ChatOpenAI:
-        """Get LLM instance."""
-        return ChatOpenAI(
-            model=model or self.default_model,
-            temperature=temperature,
-            streaming=streaming,
-            api_key=self.api_key,
-            base_url=self.api_base,
+        self.default_temperature = settings.openai.temperature
+        self.llm = ChatOpenAI(
+            api_key=settings.openai.api_key,
+            base_url=settings.openai.api_base,
         )
     
     def _convert_messages(self, messages: list[Message]) -> list[BaseMessage]:
@@ -44,29 +32,27 @@ class ChatService:
                 lc_messages.append(AIMessage(content=msg.content))
         return lc_messages
     
-    async def chat(self, request: ChatRequest) -> str:
-        """Generate a chat completion."""
-        llm = self._get_llm(
-            model=request.model,
-            temperature=request.temperature or 0.7,
-            streaming=False,
-        )
-        messages = self._convert_messages(request.messages)
-        response = await llm.ainvoke(messages)
-        return str(response.content)
-    
-    async def chat_stream(self, request: ChatRequest) -> AsyncGenerator[str, None]:
-        """Generate a streaming chat completion."""
-        llm = self._get_llm(
-            model=request.model,
-            temperature=request.temperature or 0.7,
-            streaming=True,
+    async def chat(self, request: ChatRequest) -> AIMessage | AsyncGenerator[AIMessageChunk, None]:
+        """Generate a chat completion.
+        
+        Returns:
+            - If stream=False: Complete AIMessage response
+            - If stream=True: AsyncGenerator yielding AIMessageChunk objects
+        """
+        llm = self.llm.bind(
+            model=request.model or self.default_model,
+            temperature=request.temperature or self.default_temperature,
         )
         messages = self._convert_messages(request.messages)
         
-        async for chunk in llm.astream(messages):
-            if chunk.content:
-                yield str(chunk.content)
+        if not request.stream:
+            return await llm.ainvoke(messages)
+        
+        async def stream_generator() -> AsyncGenerator[AIMessageChunk, None]:
+            async for chunk in llm.astream(messages):
+                yield chunk
+        
+        return stream_generator()
 
 
 @lru_cache
